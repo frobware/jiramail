@@ -2,6 +2,7 @@ package syncer
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"regexp"
 
@@ -61,21 +62,12 @@ func (s *JiraSyncer) Boards() error {
 
 			logrus.Infof("board %q", boardName)
 
-			mdir, err := Maildir(path.Join(s.config.Remote[s.remote].DestDir, "boards", boardName))
-			if err != nil {
-				return err
-			}
+			mdir := path.Join(s.config.Remote[s.remote].DestDir, "boards", boardName)
 
-			msg, err := jiraconv.NewConverter(s.remote, s.usercache).Board(board, refs)
+			err := os.MkdirAll(mdir, 0755)
 			if err != nil {
 				return err
 			}
-
-			err = s.writeMessage(mdir, msg)
-			if err != nil {
-				return err
-			}
-			handled += 1
 
 			err = s.sprints(mdir, board, refs)
 			if err != nil {

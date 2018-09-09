@@ -9,31 +9,22 @@ import (
 
 	"github.com/legionus/jirasync/internal/jiraconv"
 	"github.com/legionus/jirasync/internal/jiraplus"
-	"github.com/legionus/jirasync/internal/maildir"
 )
 
-func (s *JiraSyncer) sprint(parent maildir.Dir, board *jira.Board, sprint *jira.Sprint, refs []string) error {
-	// TODO(legion) Fix this mess
-
+func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprint, refs []string) error {
 	logrus.Infof("sprint %q", sprint.Name)
 
-	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Sprint(sprint, append(refs, jiraconv.BoardMessageID(board)))
-	if err != nil {
-		return err
-	}
-
-	// write sprint to the board maildir
-	err = s.writeMessage(parent, msg)
-	if err != nil {
-		return err
-	}
-
-	mdir, err := Maildir(path.Join(string(parent), fmt.Sprintf("%s (%d)", ReplaceStringTrash(sprint.Name), sprint.ID)))
+	mdir, err := Maildir(path.Join(parent, fmt.Sprintf("%s (%d)", ReplaceStringTrash(sprint.Name), sprint.ID)))
 	if err != nil {
 		return err
 	}
 
 	// write sprint to the sprint maildir
+	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Sprint(sprint, append(refs, jiraconv.BoardMessageID(board)))
+	if err != nil {
+		return err
+	}
+
 	err = s.writeMessage(mdir, msg)
 	if err != nil {
 		return err
@@ -107,7 +98,7 @@ func (s *JiraSyncer) sprint(parent maildir.Dir, board *jira.Board, sprint *jira.
 	return nil
 }
 
-func (s *JiraSyncer) sprints(parent maildir.Dir, board *jira.Board, refs []string) error {
+func (s *JiraSyncer) sprints(parent string, board *jira.Board, refs []string) error {
 	opts := &jira.GetAllSprintsOptions{}
 	opts.MaxResults = 100
 

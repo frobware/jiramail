@@ -8,11 +8,10 @@ import (
 
 	"github.com/legionus/jirasync/internal/jiraconv"
 	"github.com/legionus/jirasync/internal/jiraplus"
-	"github.com/legionus/jirasync/internal/maildir"
 )
 
-func (s *JiraSyncer) backlog(parent maildir.Dir, board *jira.Board, refs []string) error {
-	mdir, err := Maildir(path.Join(string(parent), "Backlog"))
+func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) error {
+	mdir, err := Maildir(path.Join(parent, "Backlog"))
 	if err != nil {
 		return err
 	}
