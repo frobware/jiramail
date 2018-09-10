@@ -31,13 +31,13 @@ func replaceIssue(client *jiraplus.Client, msg *command.Mail) error {
 
 	subject := strings.TrimSpace(msg.Header.Get("Subject"))
 
-	subject = strings.TrimPrefix(subject, "Re: ") // RFC5322
-	subject = strings.TrimPrefix(subject, "re: ")
-	subject = strings.TrimPrefix(subject, "["+issueKey+"] ")
+	subject = strings.TrimSpace(strings.TrimPrefix(subject, "Re:")) // RFC5322
+	subject = strings.TrimSpace(strings.TrimPrefix(subject, "re:"))
+	subject = strings.TrimSpace(strings.TrimPrefix(subject, "["+issueKey+"]"))
 
 	issue := command.JiraMap{
 		"update": command.JiraMap{
-			"summary":     []command.JiraMap{{"set": strings.TrimSpace(subject)}},
+			"summary":     []command.JiraMap{{"set": subject}},
 			"description": []command.JiraMap{{"set": command.GetBody(msg)}},
 		},
 	}
