@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/legionus/jirasync/internal/config"
+	"github.com/legionus/jiramail/internal/config"
 )
 
 type Handler interface {

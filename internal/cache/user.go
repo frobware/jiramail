@@ -6,7 +6,7 @@ import (
 
 	"github.com/andygrunwald/go-jira"
 
-	"github.com/legionus/jirasync/internal/jiraplus"
+	"github.com/legionus/jiramail/internal/jiraplus"
 )
 
 type User struct {

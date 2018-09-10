@@ -3,7 +3,7 @@ package jiraconv
 import (
 	"github.com/andygrunwald/go-jira"
 
-	"github.com/legionus/jirasync/internal/cache"
+	"github.com/legionus/jiramail/internal/cache"
 )
 
 type Converter struct {

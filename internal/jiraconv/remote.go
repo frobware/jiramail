@@ -1,7 +1,7 @@
 package jiraconv
 
 import (
-	"github.com/legionus/jirasync/internal/message"
+	"github.com/legionus/jiramail/internal/message"
 )
 
 func RemoteMessageID(name string) string {

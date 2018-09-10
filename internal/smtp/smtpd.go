@@ -4,7 +4,7 @@ import (
 	"github.com/bradfitz/go-smtpd/smtpd"
 	"github.com/sirupsen/logrus"
 
-	"github.com/legionus/jirasync/internal/config"
+	"github.com/legionus/jiramail/internal/config"
 )
 
 func Server(cfg *config.Configuration) error {

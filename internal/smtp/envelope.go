@@ -10,14 +10,14 @@ import (
 	"github.com/bradfitz/go-smtpd/smtpd"
 	"github.com/sirupsen/logrus"
 
-	"github.com/legionus/jirasync/internal/config"
-	"github.com/legionus/jirasync/internal/message"
-	"github.com/legionus/jirasync/internal/smtp/command"
-	"github.com/legionus/jirasync/internal/smtp/command/factory"
+	"github.com/legionus/jiramail/internal/config"
+	"github.com/legionus/jiramail/internal/message"
+	"github.com/legionus/jiramail/internal/smtp/command"
+	"github.com/legionus/jiramail/internal/smtp/command/factory"
 
-	_ "github.com/legionus/jirasync/internal/smtp/command/directive"
-	_ "github.com/legionus/jirasync/internal/smtp/command/replace"
-	_ "github.com/legionus/jirasync/internal/smtp/command/reply"
+	_ "github.com/legionus/jiramail/internal/smtp/command/directive"
+	_ "github.com/legionus/jiramail/internal/smtp/command/replace"
+	_ "github.com/legionus/jiramail/internal/smtp/command/reply"
 )
 
 type envelope struct {

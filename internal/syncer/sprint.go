@@ -7,8 +7,8 @@ import (
 	"github.com/andygrunwald/go-jira"
 	"github.com/sirupsen/logrus"
 
-	"github.com/legionus/jirasync/internal/jiraconv"
-	"github.com/legionus/jirasync/internal/jiraplus"
+	"github.com/legionus/jiramail/internal/jiraconv"
+	"github.com/legionus/jiramail/internal/jiraplus"
 )
 
 func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprint, refs []string) error {

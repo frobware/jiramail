@@ -3,7 +3,7 @@ package factory
 import (
 	"fmt"
 
-	"github.com/legionus/jirasync/internal/smtp/command"
+	"github.com/legionus/jiramail/internal/smtp/command"
 )
 
 var (

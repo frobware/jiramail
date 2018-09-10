@@ -9,8 +9,8 @@ import (
 
 	"github.com/andygrunwald/go-jira"
 
-	"github.com/legionus/jirasync/internal/message"
-	"github.com/legionus/jirasync/internal/smtp/command"
+	"github.com/legionus/jiramail/internal/message"
+	"github.com/legionus/jiramail/internal/smtp/command"
 )
 
 func (c *Converter) processIssue(mType, ID, Key string, fields *jira.IssueFields, refs []string) ([]*mail.Message, error) {

@@ -5,8 +5,8 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/legionus/jirasync/internal/maildir"
-	"github.com/legionus/jirasync/internal/message"
+	"github.com/legionus/jiramail/internal/maildir"
+	"github.com/legionus/jiramail/internal/message"
 )
 
 func (s *JiraSyncer) CleanDir(mdir maildir.Dir) error {

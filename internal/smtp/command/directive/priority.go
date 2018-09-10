@@ -7,8 +7,8 @@ import (
 
 	//"github.com/andygrunwald/go-jira"
 
-	"github.com/legionus/jirasync/internal/jiraplus"
-	"github.com/legionus/jirasync/internal/smtp/command"
+	"github.com/legionus/jiramail/internal/jiraplus"
+	"github.com/legionus/jiramail/internal/smtp/command"
 )
 
 func commandPriority(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {

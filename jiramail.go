@@ -12,9 +12,9 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/legionus/getopt"
-	"github.com/legionus/jirasync/internal/config"
-	"github.com/legionus/jirasync/internal/smtp"
-	"github.com/legionus/jirasync/internal/syncer"
+	"github.com/legionus/jiramail/internal/config"
+	"github.com/legionus/jiramail/internal/smtp"
+	"github.com/legionus/jiramail/internal/syncer"
 )
 
 var (
@@ -102,7 +102,7 @@ func syncJira(c *config.Configuration) error {
 func main() {
 	prog = filepath.Base(os.Args[0])
 	oneSync := false
-	configFile := os.Getenv("HOME") + "/.jirasyncrc"
+	configFile := os.Getenv("HOME") + "/.jiramailrc"
 
 	opts := &getopt.Getopt{
 		AllowAbbrev: true,

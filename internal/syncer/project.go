@@ -8,8 +8,8 @@ import (
 	"github.com/andygrunwald/go-jira"
 	"github.com/sirupsen/logrus"
 
-	"github.com/legionus/jirasync/internal/jiraconv"
-	"github.com/legionus/jirasync/internal/maildir"
+	"github.com/legionus/jiramail/internal/jiraconv"
+	"github.com/legionus/jiramail/internal/maildir"
 )
 
 func (s *JiraSyncer) project(mdir maildir.Dir, projectKey string) error {

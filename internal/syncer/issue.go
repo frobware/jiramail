@@ -6,9 +6,9 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/andygrunwald/go-jira"
-	"github.com/legionus/jirasync/internal/jiraconv"
-	"github.com/legionus/jirasync/internal/jiraplus"
-	"github.com/legionus/jirasync/internal/maildir"
+	"github.com/legionus/jiramail/internal/jiraconv"
+	"github.com/legionus/jiramail/internal/jiraplus"
+	"github.com/legionus/jiramail/internal/maildir"
 )
 
 func (s *JiraSyncer) issue(mdir maildir.Dir, issue *jira.Issue, refs []string) error {

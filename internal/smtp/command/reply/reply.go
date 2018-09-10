@@ -8,10 +8,10 @@ import (
 	"github.com/andygrunwald/go-jira"
 	//log "github.com/sirupsen/logrus"
 
-	"github.com/legionus/jirasync/internal/client"
-	"github.com/legionus/jirasync/internal/config"
-	"github.com/legionus/jirasync/internal/smtp/command"
-	"github.com/legionus/jirasync/internal/smtp/command/factory"
+	"github.com/legionus/jiramail/internal/client"
+	"github.com/legionus/jiramail/internal/config"
+	"github.com/legionus/jiramail/internal/smtp/command"
+	"github.com/legionus/jiramail/internal/smtp/command/factory"
 )
 
 var _ command.Handler = &Reply{}

@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/legionus/jirasync/internal/cache"
-	"github.com/legionus/jirasync/internal/client"
-	"github.com/legionus/jirasync/internal/config"
-	"github.com/legionus/jirasync/internal/jiraplus"
-	"github.com/legionus/jirasync/internal/maildir"
-	"github.com/legionus/jirasync/internal/message"
+	"github.com/legionus/jiramail/internal/cache"
+	"github.com/legionus/jiramail/internal/client"
+	"github.com/legionus/jiramail/internal/config"
+	"github.com/legionus/jiramail/internal/jiraplus"
+	"github.com/legionus/jiramail/internal/maildir"
+	"github.com/legionus/jiramail/internal/message"
 )
 
 type JiraSyncer struct {

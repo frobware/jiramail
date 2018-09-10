@@ -6,8 +6,8 @@ import (
 
 	"github.com/andygrunwald/go-jira"
 
-	"github.com/legionus/jirasync/internal/config"
-	"github.com/legionus/jirasync/internal/jiraplus"
+	"github.com/legionus/jiramail/internal/config"
+	"github.com/legionus/jiramail/internal/jiraplus"
 )
 
 func NewClient(c *config.Configuration, remoteName string) (*jiraplus.Client, error) {
