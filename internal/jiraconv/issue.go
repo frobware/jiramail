@@ -82,12 +82,6 @@ func (c *Converter) processIssue(mType, ID, Key string, fields *jira.IssueFields
 	if fields.Resolution != nil {
 		issueInfo = append(issueInfo, []string{"Resolution", fields.Resolution.Name})
 	}
-	if fields.Epic != nil {
-		issueInfo = append(issueInfo, []string{"Epic", fields.Epic.Key})
-	}
-	if fields.Sprint != nil {
-		issueInfo = append(issueInfo, []string{"Sprint", fields.Sprint.Name})
-	}
 	if fields.Status != nil {
 		issueInfo = append(issueInfo, []string{"Status", fields.Status.Name})
 	}
