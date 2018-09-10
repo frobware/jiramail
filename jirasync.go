@@ -5,8 +5,10 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"syscall"
 	"time"
 
+	"github.com/sevlyar/go-daemon"
 	"github.com/sirupsen/logrus"
 
 	"github.com/legionus/getopt"
@@ -18,9 +20,10 @@ import (
 var (
 	prog           = ""
 	version        = "1.0"
-	configcile     = ""
 	showVersionOpt = false
 	showHelpOpt    = false
+	lockDir        = ""
+	exitCode       = 0
 )
 
 func usage() {
@@ -58,6 +61,42 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 `,
 		prog, version)
 	os.Exit(0)
+	return nil
+}
+
+func defaultSigHandler(sig os.Signal) error {
+	logrus.Infof("got signal %s, exit", sig)
+	if len(lockDir) > 0 {
+		_ = os.RemoveAll(lockDir)
+	}
+	os.Exit(exitCode)
+	return daemon.ErrStop
+}
+
+func syncJira(c *config.Configuration) error {
+	for name := range c.Remote {
+		logrus.Infof("syncing %s", name)
+
+		jiraSyncer, err := syncer.NewJiraSyncer(c, name)
+		if err != nil {
+			return err
+		}
+
+		err = jiraSyncer.Boards()
+		if err != nil {
+			return err
+		}
+		logrus.Infof("synchronization of boards for %s is completed", name)
+
+		err = jiraSyncer.Projects()
+		if err != nil {
+			return err
+		}
+		logrus.Infof("synchronization of projects for %s is completed", name)
+
+	}
+
+	logrus.Infof("synchronization is completed")
 	return nil
 }
 
@@ -107,10 +146,24 @@ func main() {
 		logrus.Fatalf("%s", err)
 	}
 
+	logrus.SetLevel(cfg.Core.LogLevel.Level)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp:    true,
+		DisableTimestamp: false,
+	})
+
+	if oneSync {
+		err = syncJira(cfg)
+		if err != nil {
+			logrus.Fatalf("%s", err)
+		}
+		return
+	}
+
 	if len(cfg.Core.LockDir) > 0 {
 		err = os.Mkdir(cfg.Core.LockDir, 0700)
 		if err != nil {
-			if os.IsExist(err) {
+			if !os.IsExist(err) {
 				logrus.Fatalf("%s", err)
 			}
 			return
@@ -118,6 +171,7 @@ func main() {
 		defer func() {
 			_ = os.RemoveAll(cfg.Core.LockDir)
 		}()
+		lockDir = cfg.Core.LockDir
 	}
 
 	if len(cfg.Core.LogFile) > 0 {
@@ -129,13 +183,18 @@ func main() {
 		logrus.SetOutput(f)
 	}
 
-	logrus.SetLevel(cfg.Core.LogLevel.Level)
-	logrus.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp:    true,
-		DisableTimestamp: false,
-	})
+	daemon.SetSigHandler(defaultSigHandler, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM)
 
 	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func(c *config.Configuration) {
+		defer wg.Done()
+		err := daemon.ServeSignals()
+		if err != nil {
+			logrus.Errorf("%s", err)
+		}
+	}(cfg)
 
 	wg.Add(1)
 	go func(c *config.Configuration) {
@@ -145,40 +204,15 @@ func main() {
 		defer ticker.Stop()
 
 		for {
-			for name := range c.Remote {
-				logrus.Infof("syncing %s", name)
-
-				jiraSyncer, err := syncer.NewJiraSyncer(c, name)
-				if err != nil {
-					logrus.Fatalf("%s", err)
-				}
-
-				err = jiraSyncer.Boards()
-				if err != nil {
-					logrus.Fatalf("%s", err)
-				}
-				logrus.Infof("synchronization of boards for %s is completed", name)
-
-				err = jiraSyncer.Projects()
-				if err != nil {
-					logrus.Fatalf("%s", err)
-				}
-				logrus.Infof("synchronization of projects for %s is completed", name)
-
+			err := syncJira(c)
+			if err != nil {
+				logrus.Fatalf("%s", err)
 			}
-			logrus.Infof("synchronization is completed")
-
-			if oneSync {
-				break
-			}
-
-			select {
-			case <-ticker.C:
-			}
+			<-ticker.C
 		}
 	}(cfg)
 
-	if !oneSync && cfg.SMTP != nil {
+	if cfg.SMTP != nil {
 		wg.Add(1)
 		go func(c *config.Configuration) {
 			defer wg.Done()
