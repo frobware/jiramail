@@ -26,6 +26,7 @@ type Configuration struct {
 type Core struct {
 	LogLevel   LogLevel
 	LogFile    string
+	LockDir    string
 	SyncPeriod time.Duration
 }
 

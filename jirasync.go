@@ -107,6 +107,19 @@ func main() {
 		logrus.Fatalf("%s", err)
 	}
 
+	if len(cfg.Core.LockDir) > 0 {
+		err = os.Mkdir(cfg.Core.LockDir, 0700)
+		if err != nil {
+			if os.IsExist(err) {
+				logrus.Fatalf("%s", err)
+			}
+			return
+		}
+		defer func() {
+			_ = os.RemoveAll(cfg.Core.LockDir)
+		}()
+	}
+
 	if len(cfg.Core.LogFile) > 0 {
 		f, err := os.OpenFile(cfg.Core.LogFile, os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
@@ -161,7 +174,6 @@ func main() {
 
 			select {
 			case <-ticker.C:
-				logrus.Info("re-sync")
 			}
 		}
 	}(cfg)
