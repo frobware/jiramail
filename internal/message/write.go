@@ -35,6 +35,9 @@ func writeMIMEHeader(w io.Writer, header mail.Header) (N int, err error) {
 }
 
 func writeMessage(w io.Writer, header mail.Header, body io.ReadSeeker) error {
+	if _, err := body.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
 	if _, err := writeMIMEHeader(w, header); err != nil {
 		return err
 	}
@@ -44,36 +47,33 @@ func writeMessage(w io.Writer, header mail.Header, body io.ReadSeeker) error {
 	return nil
 }
 
-func Write(w io.Writer, m *mail.Message) (string, error) {
-	readerSeeker, ok := m.Body.(io.ReadSeeker)
+func MakeChecksum(m *mail.Message) (string, error) {
+	body, ok := m.Body.(io.ReadSeeker)
 	if !ok {
 		return "", fmt.Errorf("unable to write such message")
 	}
 
-	_, err := readerSeeker.Seek(0, io.SeekStart)
+	hdr := make(textproto.MIMEHeader)
+	for k, v := range m.Header {
+		if k != "X-Checksum" {
+			hdr[k] = v
+		}
+	}
+
+	h := sha256.New()
+
+	err := writeMessage(h, mail.Header(hdr), body)
 	if err != nil {
 		return "", err
 	}
 
-	hash := sha256.New()
+	return fmt.Sprintf("sha256:%x", h.Sum(nil)), nil
+}
 
-	err = writeMessage(hash, m.Header, readerSeeker)
-	if err != nil {
-		return "", err
+func Write(w io.Writer, m *mail.Message) error {
+	body, ok := m.Body.(io.ReadSeeker)
+	if !ok {
+		return fmt.Errorf("unable to write such message")
 	}
-
-	chksum := fmt.Sprintf("sha256:%x", hash.Sum(nil))
-
-	hdr := textproto.MIMEHeader(m.Header)
-	hdr.Set("X-Checksum", chksum)
-
-	if _, err = readerSeeker.Seek(0, io.SeekStart); err != nil {
-		return "", err
-	}
-
-	if err = writeMessage(w, mail.Header(hdr), readerSeeker); err != nil {
-		return "", err
-	}
-
-	return chksum, err
+	return writeMessage(w, m.Header, body)
 }

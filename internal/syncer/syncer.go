@@ -45,21 +45,29 @@ func (s *JiraSyncer) writeMessage(mdir maildir.Dir, msg *mail.Message) error {
 		return err
 	}
 
+	newMessageHash, err := message.MakeChecksum(msg)
+	if err != nil {
+		return err
+	}
+
+	if curMessageHash == newMessageHash {
+		s.msgids[messageID] = struct{}{}
+		return nil
+	}
+
+	fmt.Printf("changed %s\n", messageID)
+
 	d, err := mdir.NewDeliveryKey(messageID)
 	if err != nil {
 		return fmt.Errorf("can not create ongoing message delivery to the mailbox: %s", err)
 	}
 
-	newMessageHash, err := message.Write(d, msg)
+	msg.Header["X-Checksum"] = []string{newMessageHash}
+
+	err = message.Write(d, msg)
 	if err != nil {
 		d.Abort()
 		return err
-	}
-
-	if curMessageHash == newMessageHash {
-		d.Abort()
-		s.msgids[messageID] = struct{}{}
-		return nil
 	}
 
 	if err = CloseDelivery(mdir, messageID, d); err != nil {

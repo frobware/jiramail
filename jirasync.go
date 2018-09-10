@@ -93,7 +93,6 @@ func syncJira(c *config.Configuration) error {
 			return err
 		}
 		logrus.Infof("synchronization of projects for %s is completed", name)
-
 	}
 
 	logrus.Infof("synchronization is completed")

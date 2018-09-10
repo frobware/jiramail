@@ -45,6 +45,7 @@ func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprin
 
 	opts := &jiraplus.BoardIssuesSearchOptions{}
 	opts.MaxResults = 100
+	opts.Fields = []string{"*all"}
 
 	count, err := jiraplus.List(
 		func(i int) ([]interface{}, error) {

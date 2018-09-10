@@ -30,6 +30,7 @@ func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) er
 
 	opts := &jiraplus.BoardIssuesSearchOptions{}
 	opts.MaxResults = 100
+	opts.Fields = []string{"*all"}
 
 	count, err := jiraplus.List(
 		func(i int) ([]interface{}, error) {
