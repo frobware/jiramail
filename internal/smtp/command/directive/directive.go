@@ -46,6 +46,11 @@ func parseCommand(client *jiraplus.Client, msgType string, s string, hdr textpro
 			return fmt.Errorf("unable to use %q command for this message", args[0])
 		}
 		return commandAssignee(client, hdr, args[1:])
+	case "state":
+		if msgType != "issue" {
+			return fmt.Errorf("unable to use %q command for this message", args[0])
+		}
+		return commandState(client, hdr, args[1:])
 	case "end", "--":
 		return ErrEndOfCommands
 	case "re:", ">", "#", "":
