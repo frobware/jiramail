@@ -55,8 +55,6 @@ func (s *JiraSyncer) writeMessage(mdir maildir.Dir, msg *mail.Message) error {
 		return nil
 	}
 
-	fmt.Printf("changed %s\n", messageID)
-
 	d, err := mdir.NewDeliveryKey(messageID)
 	if err != nil {
 		return fmt.Errorf("can not create ongoing message delivery to the mailbox: %s", err)
