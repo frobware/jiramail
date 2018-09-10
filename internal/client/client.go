@@ -1,7 +1,6 @@
 package client
 
 import (
-	"encoding/base64"
 	"fmt"
 	"net/http"
 
@@ -20,13 +19,9 @@ func NewClient(c *config.Configuration, remoteName string) (*jiraplus.Client, er
 	var httpClient *http.Client
 
 	if len(r.Username) > 0 {
-		password, err := base64.StdEncoding.DecodeString(r.Password)
-		if err != nil {
-			return nil, fmt.Errorf("unable to decode password: %s", err)
-		}
 		trans := jira.BasicAuthTransport{
 			Username: r.Username,
-			Password: string(password),
+			Password: r.Password,
 		}
 		httpClient = trans.Client()
 	}
