@@ -27,10 +27,17 @@ type ReplaceBody struct{}
 
 func replaceIssue(client *jiraplus.Client, msg *command.Mail) error {
 	issueID := msg.Header.Get("X-Issue-Id")
+	issueKey := msg.Header.Get("X-Issue-Key")
+
+	subject := strings.TrimSpace(msg.Header.Get("Subject"))
+
+	subject = strings.TrimPrefix(subject, "Re: ") // RFC5322
+	subject = strings.TrimPrefix(subject, "re: ")
+	subject = strings.TrimPrefix(subject, "["+issueKey+"] ")
 
 	issue := command.JiraMap{
 		"update": command.JiraMap{
-			"summary":     []command.JiraMap{{"set": strings.TrimPrefix(msg.Header.Get("Subject"), "Re: ")}}, // RFC5322
+			"summary":     []command.JiraMap{{"set": strings.TrimSpace(subject)}},
 			"description": []command.JiraMap{{"set": command.GetBody(msg)}},
 		},
 	}
