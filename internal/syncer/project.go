@@ -18,7 +18,8 @@ func (s *JiraSyncer) project(mdir maildir.Dir, projectKey string) error {
 		return fmt.Errorf("unable to get project: %s: %s", projectKey, err)
 	}
 
-	logrus.Infof("project %s", project.Key)
+	logmsg := fmt.Sprintf("remote %q, project %q", s.remote, project.Key)
+	logrus.Infof("%s begin to process", logmsg)
 
 	refs := []string{jiraconv.RemoteMessageID(s.remote)}
 
@@ -32,10 +33,12 @@ func (s *JiraSyncer) project(mdir maildir.Dir, projectKey string) error {
 		return err
 	}
 
-	err = s.issues(mdir, fmt.Sprintf("project = %s", projectKey), append(refs, msg.Header.Get("Message-ID")))
+	count, err := s.issues(mdir, fmt.Sprintf("project = %s", projectKey), append(refs, msg.Header.Get("Message-ID")))
 	if err != nil {
 		return err
 	}
+
+	logrus.Infof("%s, %d issues handled", logmsg, count)
 
 	return nil
 }

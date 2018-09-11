@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,8 +37,19 @@ func Read(filename string) (*Configuration, error) {
 
 	cfg.Core.LogFile = substHome(cfg.Core.LogFile)
 	cfg.Core.LockDir = substHome(cfg.Core.LockDir)
+
 	for name := range cfg.Remote {
 		cfg.Remote[name].DestDir = substHome(cfg.Remote[name].DestDir)
+
+		cfg.Remote[name].Delete = strings.ToLower(cfg.Remote[name].Delete)
+
+		switch cfg.Remote[name].Delete {
+		case "remove", "tag":
+		case "":
+			cfg.Remote[name].Delete = "remove"
+		default:
+			return nil, fmt.Errorf("unknown value %q, expected 'remove' or 'tag'", cfg.Remote[name].Delete)
+		}
 	}
 
 	return cfg, nil

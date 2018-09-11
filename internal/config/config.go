@@ -49,4 +49,5 @@ type Remote struct {
 	Password     string
 	ProjectMatch string
 	BoardMatch   string
+	Delete       string
 }

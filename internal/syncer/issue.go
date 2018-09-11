@@ -3,8 +3,6 @@ package syncer
 import (
 	"path"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/andygrunwald/go-jira"
 	"github.com/legionus/jiramail/internal/jiraconv"
 	"github.com/legionus/jiramail/internal/jiraplus"
@@ -42,14 +40,14 @@ func (s *JiraSyncer) projectissue(issue *jira.Issue) error {
 	return s.issue(mdir, issue, refs)
 }
 
-func (s *JiraSyncer) issues(mdir maildir.Dir, query string, refs []string) error {
+func (s *JiraSyncer) issues(mdir maildir.Dir, query string, refs []string) (int, error) {
 	opts := &jira.SearchOptions{
 		StartAt:    0,
 		MaxResults: 100,
 		Fields:     []string{"*all"},
 	}
 
-	count, err := jiraplus.List(
+	return jiraplus.List(
 		func(i int) ([]interface{}, error) {
 			opts.StartAt = i
 
@@ -82,11 +80,4 @@ func (s *JiraSyncer) issues(mdir maildir.Dir, query string, refs []string) error
 			return nil
 		},
 	)
-	if err != nil {
-		return err
-	}
-
-	logrus.Infof("issues %d", count)
-
-	return nil
 }

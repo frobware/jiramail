@@ -60,8 +60,6 @@ func (s *JiraSyncer) Boards() error {
 
 			boardName := fmt.Sprintf("%s (%d)", ReplaceStringTrash(board.Name), board.ID)
 
-			logrus.Infof("board %q", boardName)
-
 			mdir := path.Join(s.config.Remote[s.remote].DestDir, "boards", boardName)
 
 			err := os.MkdirAll(mdir, 0755)
@@ -79,6 +77,7 @@ func (s *JiraSyncer) Boards() error {
 				return err
 			}
 
+			handled += 1
 			return nil
 		},
 	)
@@ -86,7 +85,7 @@ func (s *JiraSyncer) Boards() error {
 		return err
 	}
 
-	logrus.Infof("boards %d handled %d", count, handled)
+	logrus.Infof("remote %q, %d boards were found and %d handled", s.remote, count, handled)
 
 	return nil
 }

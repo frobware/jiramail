@@ -12,7 +12,8 @@ import (
 )
 
 func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprint, refs []string) error {
-	logrus.Infof("sprint %q", sprint.Name)
+	logmsg := fmt.Sprintf("remote %q, board %q, sprint %q", s.remote, board.Name, sprint.Name)
+	logrus.Infof("%s begin to process", logmsg)
 
 	mdir, err := Maildir(path.Join(parent, fmt.Sprintf("%s (%d)", ReplaceStringTrash(sprint.Name), sprint.ID)))
 	if err != nil {
@@ -88,7 +89,7 @@ func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprin
 		return err
 	}
 
-	logrus.Infof("sprint issues %d", count)
+	logrus.Infof("%s, %d issues handled", logmsg, count)
 
 	// Garbage collection
 	err = s.CleanDir(mdir)
@@ -103,7 +104,7 @@ func (s *JiraSyncer) sprints(parent string, board *jira.Board, refs []string) er
 	opts := &jira.GetAllSprintsOptions{}
 	opts.MaxResults = 100
 
-	count, err := jiraplus.List(
+	_, err := jiraplus.List(
 		func(i int) ([]interface{}, error) {
 			opts.StartAt = i
 
@@ -131,11 +132,6 @@ func (s *JiraSyncer) sprints(parent string, board *jira.Board, refs []string) er
 			return nil
 		},
 	)
-	if err != nil {
-		return err
-	}
 
-	logrus.Infof("board sprints %d", count)
-
-	return nil
+	return err
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/mail"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -88,18 +87,6 @@ func CloseDelivery(mdir maildir.Dir, key string, d *maildir.Delivery) error {
 		flags = strings.Replace(flags, "S", "", -1)
 	}
 
-	err = os.Remove(path.Join(string(mdir), "new", key))
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return err
-		}
-	}
-
-	err = d.Close()
-	if err != nil {
-		return err
-	}
-
 	err = mdir.Purge(key)
 	if err != nil {
 		mailErr, ok := err.(*maildir.KeyError)
@@ -108,15 +95,7 @@ func CloseDelivery(mdir maildir.Dir, key string, d *maildir.Delivery) error {
 		}
 	}
 
-	err = os.Link(
-		filepath.Join(string(mdir), "new", key),
-		filepath.Join(string(mdir), "cur", key+string(maildir.Separator)+"2,"+flags),
-	)
-	if err != nil {
-		return fmt.Errorf("unable to link message %s from new to cur: %s", key, err)
-	}
-
-	err = os.Remove(filepath.Join(string(mdir), "new", key))
+	err = d.Close()
 	if err != nil {
 		return err
 	}

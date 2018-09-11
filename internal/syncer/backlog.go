@@ -1,6 +1,7 @@
 package syncer
 
 import (
+	"fmt"
 	"path"
 
 	"github.com/andygrunwald/go-jira"
@@ -11,6 +12,9 @@ import (
 )
 
 func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) error {
+	logmsg := fmt.Sprintf("remote %q, board %q, backlog", s.remote, board.Name)
+	logrus.Infof("%s begin to process", logmsg)
+
 	mdir, err := Maildir(path.Join(parent, "Backlog"))
 	if err != nil {
 		return err
@@ -71,7 +75,7 @@ func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) er
 		return err
 	}
 
-	logrus.Infof("board backlog %d", count)
+	logrus.Infof("%s, %d issues handled", logmsg, count)
 
 	// Garbage collection
 	err = s.CleanDir(mdir)

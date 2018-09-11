@@ -111,32 +111,76 @@ func (d Dir) UnseenCount() (int, error) {
 
 // Keys returns a slice of valid keys to access messages by.
 func (d Dir) Keys() ([]string, error) {
-	f, err := os.Open(filepath.Join(string(d), "cur"))
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	names, err := f.Readdirnames(0)
-	if err != nil {
-		return nil, err
-	}
 	var keys []string
-	for _, n := range names {
-		if n[0] != '.' {
-			split := strings.FieldsFunc(n, func(r rune) bool {
-				return r == Separator
-			})
-			keys = append(keys, split[0])
+	fnames := make(map[string]struct{})
+
+	for _, subdir := range []string{"cur", "new"} {
+		f, err := os.Open(filepath.Join(string(d), subdir))
+		if err != nil {
+			return nil, err
+		}
+
+		names, err := f.Readdirnames(0)
+		f.Close()
+
+		if err != nil {
+			return nil, err
+		}
+
+		for _, n := range names {
+			if n[0] != '.' {
+				split := strings.FieldsFunc(n, func(r rune) bool {
+					return r == Separator
+				})
+				fnames[split[0]] = struct{}{}
+			}
 		}
 	}
+
+	for n := range fnames {
+		keys = append(keys, n)
+	}
+
 	return keys, nil
 }
+
+// Filename returns the path to the file corresponding to the key in the "new" folder.
+func (d Dir) FilenameNew(key string) (string, error) {
+	n := 0
+	f := ""
+	base := filepath.Join(string(d), "new")
+	dir, err := os.Open(base)
+	if err != nil {
+		return f, err
+	}
+	defer dir.Close()
+	names, err := dir.Readdirnames(0)
+	if err != nil {
+		return f, err
+	}
+	prefix := key + string(Separator)
+	for _, name := range names {
+		if name == key || strings.HasPrefix(name, prefix) {
+			f = filepath.Join(base, name)
+			n++
+		}
+	}
+	switch n {
+	case 0:
+		return f, &KeyError{key, 0}
+	case 1:
+		return f, nil
+	}
+	return "", &KeyError{key, n}
+}
+
 
 // Filename returns the path to the file corresponding to the key.
 func (d Dir) Filename(key string) (string, error) {
 	n := 0
 	f := ""
-	dir, err := os.Open(filepath.Join(string(d), "cur"))
+	base := filepath.Join(string(d), "cur")
+	dir, err := os.Open(base)
 	if err != nil {
 		return f, err
 	}
@@ -148,13 +192,13 @@ func (d Dir) Filename(key string) (string, error) {
 	prefix := key + string(Separator)
 	for _, name := range names {
 		if strings.HasPrefix(name, prefix) {
-			f = filepath.Join(string(d), "cur", name)
+			f = filepath.Join(base, name)
 			n++
 		}
 	}
 	switch n {
 	case 0:
-		return f, &KeyError{key, 0}
+		return d.FilenameNew(key)
 	case 1:
 		return f, nil
 	}
@@ -266,7 +310,8 @@ func (d Dir) SetInfo(key, info string) error {
 	if err != nil {
 		return err
 	}
-	err = os.Rename(filename, filepath.Join(string(d), "cur", key+
+	dirname, _ := filepath.Split(filename)
+	err = os.Rename(filename, filepath.Join(dirname, key+
 		string(Separator)+info))
 	return err
 }

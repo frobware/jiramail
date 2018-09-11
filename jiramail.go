@@ -75,8 +75,6 @@ func defaultSigHandler(sig os.Signal) error {
 
 func syncJira(c *config.Configuration) error {
 	for name := range c.Remote {
-		logrus.Infof("syncing %s", name)
-
 		jiraSyncer, err := syncer.NewJiraSyncer(c, name)
 		if err != nil {
 			return err
@@ -86,13 +84,11 @@ func syncJira(c *config.Configuration) error {
 		if err != nil {
 			return err
 		}
-		logrus.Infof("synchronization of boards for %s is completed", name)
 
 		err = jiraSyncer.Projects()
 		if err != nil {
 			return err
 		}
-		logrus.Infof("synchronization of projects for %s is completed", name)
 	}
 
 	logrus.Infof("synchronization is completed")
