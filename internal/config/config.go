@@ -31,11 +31,12 @@ type Core struct {
 }
 
 type SMTP struct {
-	Addr         string
-	Hostname     string
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
-	PlainAuth    bool
+	Addr            string
+	Hostname        string
+	ReadTimeout     time.Duration
+	WriteTimeout    time.Duration
+	PlainAuth       bool
+	LogMessagesOnly bool
 }
 
 type Command struct {

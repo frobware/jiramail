@@ -15,8 +15,10 @@ func Server(cfg *config.Configuration) error {
 		WriteTimeout: cfg.SMTP.WriteTimeout,
 		PlainAuth:    cfg.SMTP.PlainAuth,
 		OnNewMail: func(c smtpd.Connection, from smtpd.MailAddress) (smtpd.Envelope, error) {
+			if cfg.SMTP.LogMessagesOnly {
+				return &smtpd.BasicEnvelope{}, nil
+			}
 			return NewEnvelope(cfg, c, from)
-			//return &smtpd.BasicEnvelope{}, nil
 		},
 	}
 
