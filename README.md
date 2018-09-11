@@ -4,6 +4,16 @@ The `jiramail` is mail transport for Atlassian's Jira service written in Go. Thi
 stores data (`projects`, `sprints`, `issues`, `comments`, etc.) from jira to local maildir.
 Optionally for making changes, it provides an SMTP interface.
 
+# Runtime
+
+There are two ways to run the utility. The first and the main way when the utility
+in an infinite loop after a some period of time synchronizes the state. The second way, when
+the utility is started once, synchronizes the state and finishes execution:
+
+```bash
+jiramail -1
+```
+
 # Configuration
 
 Example:
@@ -26,6 +36,10 @@ remote:
     delete: remove
 ```
 
+# Mail client
+
+You can use any mail client that can read the local mailbox in the `maildir` format.
+
 # SMTP server
 
 The utility provides a special SMTP server so that you can make changes in the Jira. It does not
@@ -36,19 +50,21 @@ So it matters to which message you reply.
 
 If you reply to the message and send it to:
 
-### reply@jira
+### To: reply@jira
 
 * reply to `issue` or `comment` will add new comment;
 * reply to `project` will create a new issue.
 
-### edit@jira
+### To: edit@jira
 
 The reply to this address is used to edit the `Subject` and the body of the message. Be careful and do not
 forget about quoting in your mail client. This operation is valid for `issues` and `comments`.
 
-### bot@jira
+### To: bot@jira
 
-This is a special address where the body of the message is treated as a sequence of commands.
+This is a special address where the body of the message is treated as a sequence of directives.
+Each directive should take one line. Arguments with spaces must be specified in quota (as in shell).
+Lines starting with '#' or '>' will be ignored.
 This operation is valid for `issues`
 
 #### Change labels
@@ -80,3 +96,8 @@ Argument is not case sensitive.
 assignee to me
 assignee to legionus
 ```
+
+#### End of commands
+
+To stop directives interpretation you can specify `end` or `--`. After this directive,
+the rest of the text in the letter will be ignored.
