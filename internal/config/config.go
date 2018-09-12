@@ -17,10 +17,9 @@ func (d *LogLevel) UnmarshalText(data []byte) (err error) {
 }
 
 type Configuration struct {
-	Core    Core
-	SMTP    *SMTP
-	Command Command
-	Remote  map[string]*Remote
+	Core   Core
+	SMTP   *SMTP
+	Remote map[string]*Remote
 }
 
 type Core struct {
@@ -33,14 +32,17 @@ type Core struct {
 type SMTP struct {
 	Addr            string
 	Hostname        string
-	ReadTimeout     time.Duration
-	WriteTimeout    time.Duration
-	PlainAuth       bool
+	Auth            *SMTPAuth
 	LogMessagesOnly bool
+	TLS      struct {
+		CertFile string
+		KeyFile  string
+	}
 }
 
-type Command struct {
-	To string
+type SMTPAuth struct {
+	Username string
+	Password string
 }
 
 type Remote struct {

@@ -37,6 +37,13 @@ func Read(filename string) (*Configuration, error) {
 
 	cfg.Core.LogFile = substHome(cfg.Core.LogFile)
 	cfg.Core.LockDir = substHome(cfg.Core.LockDir)
+	cfg.SMTP.TLS.CertFile = substHome(cfg.SMTP.TLS.CertFile)
+	cfg.SMTP.TLS.KeyFile = substHome(cfg.SMTP.TLS.KeyFile)
+
+	if (len(cfg.SMTP.TLS.CertFile) == 0 && len(cfg.SMTP.TLS.KeyFile) > 0) ||
+		(len(cfg.SMTP.TLS.CertFile) > 0 && len(cfg.SMTP.TLS.KeyFile) == 0) {
+		return nil, fmt.Errorf("you must specify CertFile and KeyFile to enable TLS")
+	}
 
 	for name := range cfg.Remote {
 		cfg.Remote[name].DestDir = substHome(cfg.Remote[name].DestDir)
