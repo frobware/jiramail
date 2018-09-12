@@ -265,6 +265,8 @@ func (d Dir) Flags(key string) (string, error) {
 		return r == Separator
 	})
 	switch {
+	case len(split) == 1:
+		return "", nil
 	case len(split[1]) < 2,
 		split[1][1] != ',':
 		return "", &FlagError{split[1], false}
