@@ -14,6 +14,22 @@ the utility is started once, synchronizes the state and finishes execution:
 jiramail -1
 ```
 
+# Folders layout
+
+The utility will create the following directory hierarchy:
+
+```
+{Destdir}
+  ⤷ {RemoteName}
+    ⤷ boards
+      ⤷ {BoardName}
+        ⤷ backlog
+        ⤷ sprints
+          ⤷ {SprintName}
+    ⤷ projects
+      ⤷ {ProjectKey}
+```
+
 # Configuration
 
 Example:
@@ -25,6 +41,9 @@ core:
   lockdir: ~/tmp/jiramail.lock
 smtp:
   addr: 127.0.0.1:10025
+  auth:
+    username: jiramail
+    password: SMTP-PRIVATE-KEY
 remote:
   coreos:
     destdir: ~/Mail/jira/coreos
