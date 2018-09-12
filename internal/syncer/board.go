@@ -72,6 +72,11 @@ func (s *JiraSyncer) Boards() error {
 				return err
 			}
 
+			err = s.epics(mdir, board, refs)
+			if err != nil {
+				return err
+			}
+
 			err = s.backlog(mdir, board, refs)
 			if err != nil {
 				return err
