@@ -15,7 +15,7 @@ func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) er
 	logmsg := fmt.Sprintf("remote %q, board %q, backlog", s.remote, board.Name)
 	logrus.Infof("%s begin to process", logmsg)
 
-	mdir, err := Maildir(path.Join(parent, "Backlog"))
+	mdir, err := Maildir(path.Join(parent, "backlog"))
 	if err != nil {
 		return err
 	}

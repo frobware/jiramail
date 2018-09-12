@@ -15,7 +15,7 @@ func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprin
 	logmsg := fmt.Sprintf("remote %q, board %q, sprint %q", s.remote, board.Name, sprint.Name)
 	logrus.Infof("%s begin to process", logmsg)
 
-	mdir, err := Maildir(path.Join(parent, fmt.Sprintf("%s (%d)", ReplaceStringTrash(sprint.Name), sprint.ID)))
+	mdir, err := Maildir(path.Join(parent, "sprints", fmt.Sprintf("%s (%d)", ReplaceStringTrash(sprint.Name), sprint.ID)))
 	if err != nil {
 		return err
 	}
