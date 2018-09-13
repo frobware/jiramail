@@ -24,11 +24,16 @@ The utility will create the following directory hierarchy:
     ⤷ boards
       ⤷ {BoardName}
         ⤷ backlog
+        ⤷ epics
+          ⤷ {EpicName}
         ⤷ sprints
           ⤷ {SprintName}
     ⤷ projects
       ⤷ {ProjectKey}
 ```
+
+Known problem: If the name of the `board`, `epic` or `sprint` changes, a new maildir will be created.
+If I use identifiers, it becomes very uninformative.
 
 # Configuration
 
@@ -71,13 +76,17 @@ If you reply to the message and send it to:
 
 ### To: reply@jira
 
-* reply to `issue` or `comment` will add new comment;
+* reply to `issue` will add new comment, but if you use `reply+subtask@jira` then a subtask will be created;
+* reply to `comment` will add new comment;
 * reply to `project` will create a new issue.
 
 ### To: edit@jira
 
 The reply to this address is used to edit the `Subject` and the body of the message. Be careful and do not
 forget about quoting in your mail client. This operation is valid for `issues` and `comments`.
+
+To update only subject of issue, use the address: `edit+subject@jira`. Same with the body of the message.
+To update only the body, use the address: `edit+body@jira`.
 
 ### To: bot@jira
 
