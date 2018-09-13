@@ -20,7 +20,7 @@ func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) er
 		return err
 	}
 
-	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Board(board, refs)
+	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Board(board, "nobody@jira", refs)
 	if err != nil {
 		return err
 	}

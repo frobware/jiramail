@@ -34,7 +34,7 @@ type SMTP struct {
 	Hostname        string
 	Auth            *SMTPAuth
 	LogMessagesOnly bool
-	TLS      struct {
+	TLS             struct {
 		CertFile string
 		KeyFile  string
 	}

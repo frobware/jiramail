@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/textproto"
 	"strings"
+
+	"github.com/legionus/jiramail/internal/message"
 )
 
 const (
@@ -12,6 +14,7 @@ const (
 )
 
 type Mail struct {
+	Rcpt   *message.Address
 	Header textproto.MIMEHeader
 	Body   []string
 }

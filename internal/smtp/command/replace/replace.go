@@ -25,7 +25,7 @@ func init() {
 
 type ReplaceBody struct{}
 
-func replaceIssue(client *jiraplus.Client, msg *command.Mail) error {
+func replaceIssue(client *jiraplus.Client, msg *command.Mail, updateSubject, updateBody bool) error {
 	issueID := msg.Header.Get("X-Issue-Id")
 	issueKey := msg.Header.Get("X-Issue-Key")
 
@@ -35,14 +35,16 @@ func replaceIssue(client *jiraplus.Client, msg *command.Mail) error {
 	subject = strings.TrimSpace(strings.TrimPrefix(subject, "re:"))
 	subject = strings.TrimSpace(strings.TrimPrefix(subject, "["+issueKey+"]"))
 
-	issue := command.JiraMap{
-		"update": command.JiraMap{
-			"summary":     []command.JiraMap{{"set": subject}},
-			"description": []command.JiraMap{{"set": command.GetBody(msg)}},
-		},
+	update := command.JiraMap{}
+
+	if updateSubject {
+		update["summary"] = []command.JiraMap{{"set": subject}}
+	}
+	if updateBody {
+		update["description"] = []command.JiraMap{{"set": command.GetBody(msg)}}
 	}
 
-	_, err := client.Issue.UpdateIssue(issueID, issue)
+	_, err := client.Issue.UpdateIssue(issueID, command.JiraMap{"update": update})
 	if err != nil {
 		return fmt.Errorf("unable to update issue %s: %s", issueID, err)
 	}
@@ -78,7 +80,13 @@ func (e *ReplaceBody) Handle(cfg *config.Configuration, msg *command.Mail) error
 
 	switch msgType {
 	case "issue":
-		return replaceIssue(client, msg)
+		if _, updateSubject := msg.Rcpt.Tags["subject"]; updateSubject {
+			return replaceIssue(client, msg, updateSubject, false)
+		}
+		if _, updateBody := msg.Rcpt.Tags["body"]; updateBody {
+			return replaceIssue(client, msg, false, updateBody)
+		}
+		return replaceIssue(client, msg, true, true)
 	case "comment":
 		return replaceComment(client, msg)
 	default:

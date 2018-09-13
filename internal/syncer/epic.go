@@ -34,7 +34,7 @@ func (s *JiraSyncer) epic(parent string, board *jira.Board, epic *jira.Epic, ref
 	}
 
 	// write board to the epic maildir
-	msg, err = jiraconv.NewConverter(s.remote, s.usercache).Board(board, refs)
+	msg, err = jiraconv.NewConverter(s.remote, s.usercache).Board(board, "reply+epic@jira", refs)
 	if err != nil {
 		return err
 	}

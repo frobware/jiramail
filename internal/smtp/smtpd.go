@@ -22,30 +22,30 @@ import (
 	_ "github.com/legionus/jiramail/internal/smtp/command/reply"
 )
 
-func getHandler(header textproto.MIMEHeader, key string) (command.Handler, error) {
+func getHandler(header textproto.MIMEHeader, key string) (command.Handler, *message.Address, error) {
 	hdr := header.Get(key)
 	if hdr == "" {
-		return nil, mail.ErrHeaderNotPresent
+		return nil, nil, mail.ErrHeaderNotPresent
 	}
 
-	list, err := mail.ParseAddressList(hdr)
+	list, err := message.ParseAddressList(hdr)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	for _, addr := range list {
 		handler, err := factory.Get(addr.Address)
 		if err != nil {
 			if err != factory.InvalidMailHandlerError {
-				return nil, err
+				return nil, nil, err
 			}
 		} else {
-			return handler, nil
+			return handler, addr, nil
 		}
 	}
 
-	return nil, factory.InvalidMailHandlerError
+	return nil, nil, factory.InvalidMailHandlerError
 }
 
 func getMessage(data []byte) (*command.Mail, error) {
@@ -111,25 +111,8 @@ func mailHandler(cfg *config.Configuration, remoteAddr net.Addr, from string, to
 
 	var handler command.Handler
 
-	cmds := command.GetJiraBlock(msg)
-	if len(cmds) > 0 {
-		handler, err = factory.Get("bot@jira")
-		if err != nil {
-			logrus.Errorf("smtp: %s", err)
-			return
-		}
-		err = handler.Handle(cfg, &command.Mail{
-			Header: msg.Header,
-			Body:   cmds,
-		})
-		if err != nil {
-			logrus.Errorf("smtp: %s", err)
-			return
-		}
-	}
-
 	for _, key := range []string{"To", "Cc", "Bcc"} {
-		handler, err = getHandler(msg.Header, key)
+		handler, msg.Rcpt, err = getHandler(msg.Header, key)
 		if err == nil {
 			break
 		}

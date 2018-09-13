@@ -174,7 +174,6 @@ func (d Dir) FilenameNew(key string) (string, error) {
 	return "", &KeyError{key, n}
 }
 
-
 // Filename returns the path to the file corresponding to the key.
 func (d Dir) Filename(key string) (string, error) {
 	n := 0
