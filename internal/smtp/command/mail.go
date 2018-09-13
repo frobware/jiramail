@@ -29,8 +29,6 @@ func GetBody(msg *Mail) string {
 			ignore = true
 		case s == JiraEnd || strings.HasSuffix(s, " "+JiraEnd):
 			ignore = false
-		case strings.HasPrefix(s, "#") || strings.HasPrefix(s, ">"):
-			// ignore
 		default:
 			if !ignore {
 				if s == "\n" {
@@ -54,6 +52,8 @@ func GetJiraBlock(msg *Mail) []string {
 			ignore = false
 		case s == JiraEnd || strings.HasSuffix(s, " "+JiraEnd):
 			ignore = true
+		case strings.HasPrefix(s, "#") || strings.HasPrefix(s, ">"):
+			// ignore
 		default:
 			if !ignore && len(s) > 0 {
 				x = append(x, s)
