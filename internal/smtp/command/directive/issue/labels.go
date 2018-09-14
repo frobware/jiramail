@@ -5,6 +5,7 @@ import (
 	"net/textproto"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	//"github.com/andygrunwald/go-jira"
 
 	"github.com/legionus/jiramail/internal/jiraplus"
@@ -24,9 +25,11 @@ func processLabels(client *jiraplus.Client, header textproto.MIMEHeader, cmd str
 		return nil
 	}
 
-	issue := command.JiraMap{"update": command.JiraMap{"labels": labels}}
+	data := command.JiraMap{"update": command.JiraMap{"labels": labels}}
 
-	_, err := client.Issue.UpdateIssue(issueID, issue)
+	logrus.Debugf("JIRA REQUEST (ISSUE=%s): %#+v", issueID, data)
+
+	_, err := client.Issue.UpdateIssue(issueID, data)
 	if err != nil {
 		return fmt.Errorf("unable to update issue %s: %s", issueID, err)
 	}

@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/legionus/jiramail/internal/jiraplus"
 	"github.com/legionus/jiramail/internal/smtp/command"
 )
@@ -45,14 +47,16 @@ func StoryPoints(client *jiraplus.Client, hdr textproto.MIMEHeader, args []strin
 
 	switch fieldType {
 	case "number":
-		data = command.JiraMap{"update": command.JiraMap{fieldID: points}}
+		data = command.JiraMap{"fields": command.JiraMap{fieldID: points}}
 	case "string":
-		data = command.JiraMap{"update": command.JiraMap{fieldID: fmt.Sprintf("%d", points)}}
+		data = command.JiraMap{"fields": command.JiraMap{fieldID: fmt.Sprintf("%d", points)}}
 	default:
 		return fmt.Errorf("unsupported type of 'story points' field: %s", fieldType)
 	}
 
 	issueID := hdr.Get("X-Issue-Id")
+
+	logrus.Debugf("JIRA REQUEST (ISSUE=%s): %#+v", issueID, data)
 
 	_, err = client.Issue.UpdateIssue(issueID, data)
 	if err != nil {

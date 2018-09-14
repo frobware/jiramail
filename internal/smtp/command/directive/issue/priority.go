@@ -5,6 +5,7 @@ import (
 	"net/textproto"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	//"github.com/andygrunwald/go-jira"
 
 	"github.com/legionus/jiramail/internal/jiraplus"
@@ -33,13 +34,15 @@ func Priority(client *jiraplus.Client, header textproto.MIMEHeader, args []strin
 			continue
 		}
 
-		issue := command.JiraMap{
+		data := command.JiraMap{
 			"fields": command.JiraMap{
 				"priority": command.JiraMap{"id": priority.ID},
 			},
 		}
 
-		_, err := client.Issue.UpdateIssue(issueID, issue)
+		logrus.Debugf("JIRA REQUEST (ISSUE=%s): %#+v", issueID, data)
+
+		_, err := client.Issue.UpdateIssue(issueID, data)
 		if err != nil {
 			return fmt.Errorf("unable to set priority %s to issue %s: %s", priority.Name, issueID, err)
 		}
