@@ -1,4 +1,4 @@
-package directive
+package issue
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/legionus/jiramail/internal/jiraplus"
 )
 
-func commandAssignee(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {
+func Assignee(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("more arguments required for 'assignee' command")
 	}

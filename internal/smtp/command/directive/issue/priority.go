@@ -1,4 +1,4 @@
-package directive
+package issue
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/legionus/jiramail/internal/smtp/command"
 )
 
-func commandPriority(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {
+func Priority(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("more arguments required for 'priority' command")
 	}

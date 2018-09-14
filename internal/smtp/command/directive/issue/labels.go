@@ -1,4 +1,4 @@
-package directive
+package issue
 
 import (
 	"fmt"
@@ -34,7 +34,7 @@ func processLabels(client *jiraplus.Client, header textproto.MIMEHeader, cmd str
 	return nil
 }
 
-func commandLabels(client *jiraplus.Client, hdr textproto.MIMEHeader, args []string) error {
+func Labels(client *jiraplus.Client, hdr textproto.MIMEHeader, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("More arguments required for 'labels' command")
 	}

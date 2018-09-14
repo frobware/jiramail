@@ -1,4 +1,4 @@
-package directive
+package issue
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ func replaceStringTrash(s string) string {
 	return strings.ToLower(re.ReplaceAllString(strings.TrimSpace(s), " "))
 }
 
-func commandState(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {
+func State(client *jiraplus.Client, header textproto.MIMEHeader, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("more arguments required for 'state' command")
 	}
