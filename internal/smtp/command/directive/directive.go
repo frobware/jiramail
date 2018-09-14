@@ -32,16 +32,16 @@ func normalize(s string) string {
 }
 
 func parseCommand(client *jiraplus.Client, msgType string, s string, hdr textproto.MIMEHeader) error {
+	if len(s) == 0 || !strings.HasPrefix(s, "jira ") {
+		return nil
+	}
+
 	args, err := shellquote.Split(s)
 	if err != nil {
 		return fmt.Errorf("unable to split string: %s", err)
 	}
 
 	if len(args) < 2 {
-		return nil
-	}
-
-	if normalize(args[0]) != "jira" {
 		return nil
 	}
 
