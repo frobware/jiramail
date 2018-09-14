@@ -10,6 +10,7 @@ import (
 	"github.com/legionus/jiramail/internal/cache"
 	"github.com/legionus/jiramail/internal/client"
 	"github.com/legionus/jiramail/internal/config"
+	"github.com/legionus/jiramail/internal/jiraconv"
 	"github.com/legionus/jiramail/internal/jiraplus"
 	"github.com/legionus/jiramail/internal/maildir"
 	"github.com/legionus/jiramail/internal/message"
@@ -17,9 +18,9 @@ import (
 
 type JiraSyncer struct {
 	client    *jiraplus.Client
+	converter *jiraconv.Converter
 	config    *config.Configuration
 	remote    string
-	usercache *cache.User
 	msgids    map[string]struct{}
 	projects  map[string]struct{}
 }
@@ -32,7 +33,7 @@ func NewJiraSyncer(c *config.Configuration, remoteName string) (s *JiraSyncer, e
 		projects: make(map[string]struct{}),
 	}
 	s.client, err = client.NewClient(s.config, s.remote)
-	s.usercache = cache.NewUserCache(s.client)
+	s.converter = jiraconv.NewConverter(s.remote, cache.NewUserCache(s.client))
 	return
 }
 

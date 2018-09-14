@@ -23,7 +23,7 @@ func (s *JiraSyncer) epic(parent string, board *jira.Board, epic *jira.Epic, ref
 	}
 
 	// write epic to the epic maildir
-	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Epic(epic, append(refs, jiraconv.BoardMessageID(board)))
+	msg, err := s.converter.Epic(epic, append(refs, jiraconv.BoardMessageID(board)))
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (s *JiraSyncer) epic(parent string, board *jira.Board, epic *jira.Epic, ref
 	}
 
 	// write board to the epic maildir
-	msg, err = jiraconv.NewConverter(s.remote, s.usercache).Board(board, "reply+epic@jira", refs)
+	msg, err = s.converter.Board(board, "reply+epic@jira", refs)
 	if err != nil {
 		return err
 	}

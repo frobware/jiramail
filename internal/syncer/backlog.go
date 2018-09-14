@@ -7,7 +7,6 @@ import (
 	"github.com/andygrunwald/go-jira"
 	"github.com/sirupsen/logrus"
 
-	"github.com/legionus/jiramail/internal/jiraconv"
 	"github.com/legionus/jiramail/internal/jiraplus"
 )
 
@@ -20,7 +19,7 @@ func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) er
 		return err
 	}
 
-	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Board(board, "nobody@jira", refs)
+	msg, err := s.converter.Board(board, "nobody@jira", refs)
 	if err != nil {
 		return err
 	}

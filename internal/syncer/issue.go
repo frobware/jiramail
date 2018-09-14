@@ -10,7 +10,7 @@ import (
 )
 
 func (s *JiraSyncer) issue(mdir maildir.Dir, issue *jira.Issue, refs []string) error {
-	mailList, err := jiraconv.NewConverter(s.remote, s.usercache).Issue(issue, refs)
+	mailList, err := s.converter.Issue(issue, refs)
 	if err != nil {
 		return err
 	}

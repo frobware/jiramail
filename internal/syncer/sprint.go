@@ -21,7 +21,7 @@ func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprin
 	}
 
 	// write sprint to the sprint maildir
-	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Sprint(sprint, append(refs, jiraconv.BoardMessageID(board)))
+	msg, err := s.converter.Sprint(sprint, append(refs, jiraconv.BoardMessageID(board)))
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprin
 	}
 
 	// write board to the sprint maildir
-	msg, err = jiraconv.NewConverter(s.remote, s.usercache).Board(board, "nobody@jira", refs)
+	msg, err = s.converter.Board(board, "nobody@jira", refs)
 	if err != nil {
 		return err
 	}

@@ -23,7 +23,7 @@ func (s *JiraSyncer) project(mdir maildir.Dir, projectKey string) error {
 
 	refs := []string{jiraconv.RemoteMessageID(s.remote)}
 
-	msg, err := jiraconv.NewConverter(s.remote, s.usercache).Project(project, refs)
+	msg, err := s.converter.Project(project, refs)
 	if err != nil {
 		return err
 	}
