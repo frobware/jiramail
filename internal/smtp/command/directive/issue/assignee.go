@@ -15,19 +15,14 @@ func Assignee(client *jiraplus.Client, header textproto.MIMEHeader, args []strin
 		return fmt.Errorf("more arguments required for 'assignee' command")
 	}
 
+	if len(args) > 1 {
+		return fmt.Errorf("too many arguments for 'assignee' command")
+	}
+
 	var (
 		user *jira.User
 		err  error
 	)
-
-	if len(args) > 1 {
-		if strings.EqualFold(args[0], "to") {
-			args = args[1:]
-		}
-		if len(args) > 1 {
-			return fmt.Errorf("too many arguments for 'assignee' command")
-		}
-	}
 
 	if !strings.EqualFold(args[0], "me") {
 		users, _, err := client.User.Find(args[0])

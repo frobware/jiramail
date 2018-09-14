@@ -49,10 +49,21 @@ func parseCommand(client *jiraplus.Client, msgType string, s string, hdr textpro
 
 	if msgType == "issue" {
 		switch normalize(args[0]) {
-		case "labels":
+		case "label", "labels":
 			return issue.Labels(client, hdr, args[1:])
+		case "watcher", "watchers":
+			return issue.Watchers(client, hdr, args[1:])
+		case "story":
+			switch normalize(args[1]) {
+			case "point", "points":
+				return issue.StoryPoints(client, hdr, args[2:])
+			}
 		case "assignee":
-			return issue.Assignee(client, hdr, args[1:])
+			i := 1
+			if normalize(args[1]) == "to" {
+				i = 2
+			}
+			return issue.Assignee(client, hdr, args[i:])
 		case "state":
 			return issue.State(client, hdr, args[1:])
 		case "priority":

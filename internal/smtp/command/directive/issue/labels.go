@@ -36,7 +36,7 @@ func processLabels(client *jiraplus.Client, header textproto.MIMEHeader, cmd str
 
 func Labels(client *jiraplus.Client, hdr textproto.MIMEHeader, args []string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("More arguments required for 'labels' command")
+		return fmt.Errorf("More arguments required for command")
 	}
 
 	cmd := strings.ToLower(args[0])
@@ -45,7 +45,7 @@ func Labels(client *jiraplus.Client, hdr textproto.MIMEHeader, args []string) er
 	case "add", "remove":
 		return processLabels(client, hdr, cmd, args[1:])
 	default:
-		return fmt.Errorf("command labels got unknown subcommand: %s", args[0])
+		return fmt.Errorf("unknown subcommand: %s", args[0])
 	}
 
 	return nil
