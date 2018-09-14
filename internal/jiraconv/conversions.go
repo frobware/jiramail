@@ -7,8 +7,9 @@ import (
 )
 
 type Converter struct {
-	remote    string
-	usercache *cache.User
+	remote     string
+	usercache  *cache.User
+	jiraFields []jira.Field
 }
 
 func NewConverter(remoteName string, usercache *cache.User) *Converter {
@@ -26,4 +27,8 @@ func (c *Converter) getAssignee(data *jira.IssueFields) *User {
 		c.usercache.Set(data.Assignee)
 	}
 	return assignee
+}
+
+func (c *Converter) SetJiraFields(data []jira.Field) {
+	c.jiraFields = data
 }

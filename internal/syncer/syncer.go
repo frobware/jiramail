@@ -34,6 +34,14 @@ func NewJiraSyncer(c *config.Configuration, remoteName string) (s *JiraSyncer, e
 	}
 	s.client, err = client.NewClient(s.config, s.remote)
 	s.converter = jiraconv.NewConverter(s.remote, cache.NewUserCache(s.client))
+
+	fields, _, err := s.client.Field.GetList()
+	if err != nil {
+		return
+	}
+
+	s.converter.SetJiraFields(fields)
+
 	return
 }
 

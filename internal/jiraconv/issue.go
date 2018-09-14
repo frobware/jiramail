@@ -86,6 +86,18 @@ func (c *Converter) processIssue(mType, ID, Key string, fields *jira.IssueFields
 		issueInfo = append(issueInfo, []string{"Status", fields.Status.Name})
 	}
 
+	for _, field := range c.jiraFields {
+		if !field.Custom || !field.Navigable || fields.Unknowns[field.ID] == nil {
+			continue
+		}
+		switch field.Schema.Type {
+		case "number", "string":
+		default:
+			continue
+		}
+		issueInfo = append(issueInfo, []string{field.Name, fmt.Sprintf("%v", fields.Unknowns[field.ID])})
+	}
+
 	ret := []*mail.Message{
 		{
 			Header: mail.Header(headers),
