@@ -98,34 +98,45 @@ This operation is valid for `issues`
 #### Change labels
 
 ```
-labels add "label one" "label two"
-labels remove no-qe
+jira labels add "label one" "label two"
+jira labels remove no-qe
 ```
 
 #### Change state
 
 ```
-state "in progress"
-state To Do
+jira state "in progress"
+jira state To Do
 ```
 Argument is not case sensitive.
 
 #### Change priority
 
 ```
-priority high
-priority low
+jira priority high
+jira priority low
 ```
 Argument is not case sensitive.
 
 #### Assignee
 
 ```
-assignee to me
-assignee to legionus
+jira assignee to me
+jira assignee to legionus
 ```
 
-#### End of commands
+#### Watchers
 
-To stop directives interpretation you can specify `end` or `--`. After this directive,
-the rest of the text in the letter will be ignored.
+```
+jira watchers add user1
+jira watchers remove user2
+```
+
+#### Story points
+
+Atlassian's Jira does not have a standard field for story points, so you need to have a custom
+field with name `Story points` and type either a number or a string.
+
+```
+jira story points 5
+```
