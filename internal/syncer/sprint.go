@@ -72,7 +72,9 @@ func (s *JiraSyncer) sprint(parent string, board *jira.Board, sprint *jira.Sprin
 		func(o interface{}) error {
 			issue := o.(*jira.Issue)
 
-			//logrus.Infof("issue %s", issue.Key)
+			if issue.Fields == nil || issue.Fields.Type.Subtask {
+				return nil
+			}
 
 			if err := s.issue(mdir, issue, refs); err != nil {
 				return err

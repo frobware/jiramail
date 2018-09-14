@@ -67,7 +67,9 @@ func (s *JiraSyncer) issues(mdir maildir.Dir, query string, refs []string) (int,
 		func(o interface{}) error {
 			issue := o.(*jira.Issue)
 
-			//logrus.Infof("issue %s", issue.Key)
+			if issue.Fields == nil || issue.Fields.Type.Subtask {
+				return nil
+			}
 
 			if err := s.issue(mdir, issue, refs); err != nil {
 				return err

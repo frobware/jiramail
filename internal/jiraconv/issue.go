@@ -155,8 +155,11 @@ func (c *Converter) processIssue(mType, ID, Key string, fields *jira.IssueFields
 }
 
 func (c *Converter) Issue(data *jira.Issue, refs []string) ([]*mail.Message, error) {
-	if data == nil {
+	if data == nil || data.Fields == nil {
 		return nil, fmt.Errorf("unable to convert nil to issue messages")
+	}
+	if data.Fields.Type.Subtask {
+		return c.processIssue("subtask", data.ID, data.Key, data.Fields, refs)
 	}
 	return c.processIssue("issue", data.ID, data.Key, data.Fields, refs)
 }

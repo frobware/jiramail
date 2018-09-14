@@ -60,6 +60,10 @@ func (s *JiraSyncer) backlog(parent string, board *jira.Board, refs []string) er
 		func(o interface{}) error {
 			issue := o.(*jira.Issue)
 
+			if issue.Fields == nil || issue.Fields.Type.Subtask {
+				return nil
+			}
+
 			if err := s.issue(mdir, issue, refs); err != nil {
 				return err
 			}
