@@ -31,11 +31,6 @@ func (c *Converter) processIssue(mType, ID, Key string, fields *jira.IssueFields
 	c.usercache.Set(fields.Reporter)
 
 	date := time.Time(fields.Created)
-	updated := time.Time(fields.Updated)
-
-	if !time.Time(time.Time{}).Equal(updated) {
-		date = updated
-	}
 
 	issueID := map[string]string{
 		"ID":  ID,
