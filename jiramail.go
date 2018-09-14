@@ -97,8 +97,12 @@ func syncJira(c *config.Configuration) error {
 
 func main() {
 	prog = filepath.Base(os.Args[0])
-	oneSync := false
 	configFile := os.Getenv("HOME") + "/.jiramailrc"
+
+	var (
+		logLevel *logrus.Level
+		oneSync  bool
+	)
 
 	opts := &getopt.Getopt{
 		AllowAbbrev: true,
@@ -122,6 +126,15 @@ func main() {
 					return
 				},
 			},
+			{'l', "loglevel", getopt.RequiredArgument,
+				func(o *getopt.Option, t getopt.NameType, v string) (err error) {
+					lvl, err := logrus.ParseLevel(v)
+					if err == nil {
+						logLevel = &lvl
+					}
+					return
+				},
+			},
 			{'1', "onesync", getopt.NoArgument,
 				func(o *getopt.Option, t getopt.NameType, v string) (err error) {
 					oneSync = true
@@ -133,15 +146,22 @@ func main() {
 
 	prog = filepath.Base(os.Args[0])
 	if err := opts.Parse(os.Args); err != nil {
-		logrus.Fatalf("%v", err)
+		logrus.Errorf("%v", err)
+		return
 	}
 
 	cfg, err := config.Read(configFile)
 	if err != nil {
-		logrus.Fatalf("%s", err)
+		logrus.Errorf("%s", err)
+		return
 	}
 
-	logrus.SetLevel(cfg.Core.LogLevel.Level)
+	if logLevel != nil {
+		logrus.SetLevel(*logLevel)
+	} else {
+		logrus.SetLevel(cfg.Core.LogLevel.Level)
+	}
+
 	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:    true,
 		DisableTimestamp: false,
@@ -150,7 +170,7 @@ func main() {
 	if oneSync {
 		err = syncJira(cfg)
 		if err != nil {
-			logrus.Fatalf("%s", err)
+			logrus.Errorf("sync failed: %s", err)
 		}
 		return
 	}
@@ -159,8 +179,9 @@ func main() {
 		err = os.Mkdir(cfg.Core.LockDir, 0700)
 		if err != nil {
 			if !os.IsExist(err) {
-				logrus.Fatalf("%s", err)
+				logrus.Errorf("unable to create lock directory: %s", err)
 			}
+			logrus.Debugf("lock directory is already exists: %s", cfg.Core.LockDir)
 			return
 		}
 		defer func() {
@@ -172,7 +193,8 @@ func main() {
 	if len(cfg.Core.LogFile) > 0 {
 		f, err := os.OpenFile(cfg.Core.LogFile, os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
-			logrus.Fatalf("%s", err)
+			logrus.Errorf("unable to open log file: %s", err)
+			return
 		}
 		defer f.Close()
 		logrus.SetOutput(f)
@@ -187,7 +209,7 @@ func main() {
 		defer wg.Done()
 		err := daemon.ServeSignals()
 		if err != nil {
-			logrus.Errorf("%s", err)
+			logrus.Errorf("serve signals failed: %s", err)
 		}
 	}(cfg)
 
@@ -201,7 +223,7 @@ func main() {
 		for {
 			err := syncJira(c)
 			if err != nil {
-				logrus.Fatalf("%s", err)
+				logrus.Errorf("sync failed: %s", err)
 			}
 			<-ticker.C
 		}
@@ -215,7 +237,7 @@ func main() {
 			for {
 				err := smtp.Server(c)
 				if err != nil {
-					logrus.Errorf("%s", err)
+					logrus.Errorf("smtp server failed: %s", err)
 				}
 				time.Sleep(3 * time.Second)
 			}
@@ -223,6 +245,4 @@ func main() {
 	}
 
 	wg.Wait()
-
-	logrus.Infof("bye!")
 }
