@@ -80,6 +80,11 @@ func syncJira(c *config.Configuration) error {
 			return err
 		}
 
+		err = jiraSyncer.Globals()
+		if err != nil {
+			return err
+		}
+
 		err = jiraSyncer.Boards()
 		if err != nil {
 			return err
@@ -89,6 +94,7 @@ func syncJira(c *config.Configuration) error {
 		if err != nil {
 			return err
 		}
+
 	}
 
 	logrus.Infof("synchronization is completed")

@@ -11,6 +11,7 @@ type Client struct {
 	*jira.Client
 	PlusIssue *IssueService
 	PlusBoard *BoardService
+	IssueLink *IssueLinkService
 }
 
 func NewClient(c *jira.Client) *Client {
@@ -23,6 +24,9 @@ func NewClient(c *jira.Client) *Client {
 		PlusIssue: &IssueService{
 			IssueService: c.Issue,
 			client:       c,
+		},
+		IssueLink: &IssueLinkService{
+			client: c,
 		},
 	}
 }

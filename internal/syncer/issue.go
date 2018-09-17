@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/andygrunwald/go-jira"
+
 	"github.com/legionus/jiramail/internal/jiraconv"
 	"github.com/legionus/jiramail/internal/jiraplus"
 	"github.com/legionus/jiramail/internal/maildir"
